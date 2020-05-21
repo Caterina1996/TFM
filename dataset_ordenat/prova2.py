@@ -36,7 +36,7 @@ n_happiness_te=102
 n_sadness_te=171 
 n_surprise_te=233 
 
-4//3
+
 
 def save_bottlebeck_features():
     datagen = ImageDataGenerator(rescale=1. / 255)
@@ -53,11 +53,11 @@ def save_bottlebeck_features():
     bottleneck_features_train = model.predict_generator(
         generator, nb_train_samples // batch_size +1)
     
-    print("bottleneck_features_train ",bottleneck_features_train)
+    #print("bottleneck_features_train ",bottleneck_features_train)
     np.save(open('bottleneck_features_train.npy', 'wb'),
             bottleneck_features_train)
     
-    print("bottleneck_features_train ",bottleneck_features_train)
+    #print("bottleneck_features_train ",bottleneck_features_train)
     
 
     generator = datagen.flow_from_directory(
@@ -70,37 +70,57 @@ def save_bottlebeck_features():
     bottleneck_features_validation = model.predict_generator(
         generator, nb_validation_samples // batch_size+1)
     
-    print("bottleneck_features_val ",bottleneck_features_validation)
+    #print("bottleneck_features_val ",bottleneck_features_validation)
      
     np.save(open('bottleneck_features_validation.npy', 'wb'),
             bottleneck_features_validation)
     
-    print("bottleneck_features_val ",bottleneck_features_validation)
+    #print("bottleneck_features_val ",bottleneck_features_validation)
     
 save_bottlebeck_features()
-    
+
+b = np.array(
+          [[0,0,0,0,0,1] * n_anger_tr]+ [[0,0,0,0,1,0] *n_disgust_tr ]
+        + [[0,0,0,1,0,0]*n_fear_tr]
+        + [[0,0,1,0,0,0]*n_happiness_tr]
+        + [[0,1,0,0,0,0]*n_sadness_tr] +
+          [[1,0,0,0,0,0]*n_surprise_tr])
+
 def train_top_model():
     train_data = np.load(open('bottleneck_features_train.npy', mode="rb"))
-    train_labels = np.array(
-        [0] * n_anger_tr + [1] *n_disgust_tr + [2]*n_fear_tr + [3]*n_happiness_tr
-        +[4]*n_sadness_tr +[5]*n_surprise_tr)
-    
+#    train_labels = np.array(
+#        [0] * n_anger_tr + [1] *n_disgust_tr + [2]*n_fear_tr + [3]*n_happiness_tr
+#        +[4]*n_sadness_tr +[5]*n_surprise_tr)
+#    
+    train_labels=b
+    print("train_labels",train_labels)
     validation_data = np.load(open('bottleneck_features_validation.npy', mode="rb"))
-    validation_labels = np.array(
-        [0] * n_anger_te + [1] *n_disgust_te + [2]*n_fear_te + [3]*n_happiness_te
-        +[4]*n_sadness_te +[5]*n_surprise_te)
+#    validation_labels = np.array(
+#        [0] * n_anger_te + [1] *n_disgust_te + [2]*n_fear_te + [3]*n_happiness_te
+#        +[4]*n_sadness_te +[5]*n_surprise_te)
+    validation_labels=np.array(
+          [[0,0,0,0,0,1] * n_anger_te]+ [[0,0,0,0,1,0] *n_disgust_te ]
+        + [[0,0,0,1,0,0]*n_fear_te]
+        + [[0,0,1,0,0,0]*n_happiness_te]
+        + [[0,1,0,0,0,0]*n_sadness_te] +
+          [[1,0,0,0,0,0]*n_surprise_te])
     
-    print(train_data)
-    print("train data shape:" ,train_data.shape)
+    
+    
+#    print("validation_labels",validation_labels)
+    #print(train_data)
+#    print("train data shape:" ,train_data.shape)
     model = Sequential()
     #model.add(Flatten())
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(6, activation='softmax'))
     
-    model.compile(optimizer='rmsprop',
-                  loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy', metrics=['accuracy'])
+    
+    model.summary()
     
     print("vl data shape: ",validation_data.shape)
     print("vl labels shape: ",validation_labels.shape)
