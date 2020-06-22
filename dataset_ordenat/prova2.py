@@ -79,12 +79,21 @@ def save_bottlebeck_features():
     
 save_bottlebeck_features()
 
-b = np.array(
-          [[0,0,0,0,0,1] * n_anger_tr]+ [[0,0,0,0,1,0] *n_disgust_tr ]
-        + [[0,0,0,1,0,0]*n_fear_tr]
-        + [[0,0,1,0,0,0]*n_happiness_tr]
-        + [[0,1,0,0,0,0]*n_sadness_tr] +
-          [[1,0,0,0,0,0]*n_surprise_tr])
+
+b=np.array([[0,0,0,0,0,1] for i in range(n_anger_tr)]
+        + [[0,0,0,0,1,0] for i in range(n_disgust_tr)]
+        + [[0,0,0,1,0,0] for i in range(n_fear_tr)]
+        + [[0,0,1,0,0,0] for i in range(n_happiness_tr)]
+        + [[0,1,0,0,0,0] for i in range(n_sadness_tr)] 
+        + [[1,0,0,0,0,0] for i in range(n_surprise_tr)])
+
+
+#b = np.array(
+#          [[0,0,0,0,0,1] * n_anger_tr]+ [[0,0,0,0,1,0] *n_disgust_tr ]
+#        + [[0,0,0,1,0,0]*n_fear_tr]
+#        + [[0,0,1,0,0,0]*n_happiness_tr]
+#        + [[0,1,0,0,0,0]*n_sadness_tr] +
+#          [[1,0,0,0,0,0]*n_surprise_tr])
 
 def train_top_model():
     train_data = np.load(open('bottleneck_features_train.npy', mode="rb"))
@@ -98,14 +107,19 @@ def train_top_model():
 #    validation_labels = np.array(
 #        [0] * n_anger_te + [1] *n_disgust_te + [2]*n_fear_te + [3]*n_happiness_te
 #        +[4]*n_sadness_te +[5]*n_surprise_te)
-    validation_labels=np.array(
-          [[0,0,0,0,0,1] * n_anger_te]+ [[0,0,0,0,1,0] *n_disgust_te ]
-        + [[0,0,0,1,0,0]*n_fear_te]
-        + [[0,0,1,0,0,0]*n_happiness_te]
-        + [[0,1,0,0,0,0]*n_sadness_te] +
-          [[1,0,0,0,0,0]*n_surprise_te])
+#    validation_labels=np.array(
+#          [[0,0,0,0,0,1] * n_anger_te]+ [[0,0,0,0,1,0] *n_disgust_te ]
+#        + [[0,0,0,1,0,0]*n_fear_te]
+#        + [[0,0,1,0,0,0]*n_happiness_te]
+#        + [[0,1,0,0,0,0]*n_sadness_te] +
+#          [[1,0,0,0,0,0]*n_surprise_te])
     
-    
+    validation_labels=np.array([[0,0,0,0,0,1] for i in range(n_anger_te)]
+        + [[0,0,0,0,1,0] for i in range(n_disgust_te)]
+        + [[0,0,0,1,0,0] for i in range(n_fear_te)]
+        + [[0,0,1,0,0,0] for i in range(n_happiness_te)]
+        + [[0,1,0,0,0,0] for i in range(n_sadness_te)] 
+        + [[1,0,0,0,0,0] for i in range(n_surprise_te)])
     
 #    print("validation_labels",validation_labels)
     #print(train_data)
