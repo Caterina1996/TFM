@@ -11,8 +11,7 @@ Created on Tue May  5 12:15:37 2020
 
 @author: cmunt
 """
-!pip uninstall numpy
-!pip install numpy
+
 
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
@@ -61,7 +60,7 @@ datagen = ImageDataGenerator(rescale=1. / 255)
 model = applications.VGG16(include_top=False, weights='imagenet')
 
 train_generator = datagen.flow_from_directory(
-    'data/train',
+    'Train',
     target_size=(img_width, img_height),
     batch_size=batch_size,
     class_mode='categorical',
@@ -81,7 +80,7 @@ np.save(open('bottleneck_features_train.npy', 'wb'),
 
 
 test_generator = datagen.flow_from_directory(
-    'data/test',
+    'Val',
     target_size=(img_width, img_height),
     batch_size=batch_size,
     class_mode='categorical',
@@ -135,6 +134,8 @@ model = Sequential()
 model.add(Flatten(input_shape=train_data.shape[1:]))
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
+model.add(Dense(256, activation='relu'))
+
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(optimizer='adam',
