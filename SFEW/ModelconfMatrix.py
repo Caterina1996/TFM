@@ -187,7 +187,7 @@ predictions=model.predict(validation_data)
 
 print('Confusion Matrix')
 ypred=[round(list(i).index(max(i))) for i in predictions]
-print(confusion_matrix(test_generator.classes, ypred))
+print(confusion_matrix(test_generator.classes, ypred)[:,:])
 
 
 
